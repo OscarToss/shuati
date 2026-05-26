@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(pip --version)",
+      "Bash(pip3 --version)",
+      "Bash(npm --version)",
+      "Bash(npm install *)",
+      "Bash(where prettier *)"
+    ]
+  }
+}
