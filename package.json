@@ -1,0 +1,8 @@
+{
+  "name": "quiz-tool",
+  "private": true,
+  "scripts": {
+    "dev:web": "pnpm --filter web dev",
+    "build:web": "pnpm --filter web build"
+  }
+}

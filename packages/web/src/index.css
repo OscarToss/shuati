@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-correct: #10b981;
+  --color-correct-bg: #ecfdf5;
+  --color-wrong: #dc2626;
+  --color-wrong-bg: #fef2f2;
+  --color-accent: #f59e0b;
+  --color-surface: #f3f4f6;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overscroll-behavior-y: none;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Flat Design: no shadows */
+.card,
+.btn,
+.modal,
+.sheet {
+  box-shadow: none !important;
+}
+
+.btn:active {
+  transform: scale(0.97);
+  transition: transform 150ms ease;
+}
+
+/* Safe area padding for mobile */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}
