@@ -9,3 +9,7 @@ dist/
 .cache/
 *.log
 .DS_Store
+ARCH.md
+PRD.md
+CONTEXT.md
+UI-SPEC.md
