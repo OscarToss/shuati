@@ -41,9 +41,11 @@ export const useDeckStore = create<DeckState>((set, get) => ({
   },
 
   createDeck: async (title: string, description?: string) => {
+    const userId = JSON.parse(localStorage.getItem("quiz_auth") || "{}").userId;
+    if (!userId) return null;
     const { data, error } = await supabase
       .from("quiz_decks")
-      .insert({ title, description: description || "" })
+      .insert({ title, description: description || "", user_id: userId })
       .select("id")
       .single();
     if (error) return null;

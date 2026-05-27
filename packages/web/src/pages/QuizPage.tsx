@@ -80,11 +80,18 @@ export default function QuizPage() {
 
   const q = questions[currentIndex];
   const currentAnswer = answers[q?.id || ""];
+  const [userChoice, setUserChoice] = useState<string>("");
   const isBookmarked = bookmarks.some((b) => b.question_id === q?.id);
+
+  useEffect(() => {
+    setUserChoice("");
+    setShowExplanation(false);
+  }, [currentIndex]);
 
   const handleAnswer = useCallback(
     (answer: string) => {
       if (!q || currentAnswer) return;
+      setUserChoice(answer);
       if (mode === "exam") {
         setExamAnswers((s) => ({ ...s, [q.id]: answer }));
         if (currentIndex < questions.length - 1) {
@@ -248,12 +255,7 @@ export default function QuizPage() {
                 label={o}
                 selected={
                   currentAnswer !== null &&
-                  (mode === "exam"
-                    ? examAnswers[q.id] === o
-                    : currentAnswer === "correct"
-                      ? o === q.answer
-                      : o ===
-                        (currentAnswer === "wrong" ? answers[q.id] : undefined))
+                  (mode === "exam" ? examAnswers[q.id] === o : userChoice === o)
                 }
                 result={mode !== "exam" ? currentAnswer : null}
                 isCorrect={o === q.answer}
@@ -274,11 +276,9 @@ export default function QuizPage() {
                 label={`${key}. ${renderText(val)}`}
                 selected={
                   currentAnswer !== null &&
-                  (mode === "exam"
+                  (mode === "exam" || q.type === "multi"
                     ? !!examAnswers[q.id]?.includes(key)
-                    : currentAnswer === "correct"
-                      ? q.answer.includes(key)
-                      : !!answers[q.id])
+                    : userChoice === key)
                 }
                 result={mode !== "exam" ? currentAnswer : null}
                 isCorrect={q.answer.includes(key)}
@@ -304,7 +304,7 @@ export default function QuizPage() {
         </div>
 
         {/* Multi-select confirm */}
-        {q.type === "multi" && mode === "exam" && (
+        {q.type === "multi" && !currentAnswer && (
           <button
             className="mt-3 w-full h-10 bg-primary text-white rounded-xl text-sm font-medium"
             onClick={() => handleAnswer(examAnswers[q.id] || "")}

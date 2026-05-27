@@ -53,7 +53,19 @@ export default function ImportPage() {
         parsePlainText(text);
       }
     } catch (e: any) {
-      console.error("Parse error:", e);
+      setRows([
+        {
+          index: 0,
+          type: "choice",
+          question: "",
+          options: {},
+          answer: "",
+          explanation: "",
+          tags: [],
+          status: "error",
+          errorMsg: `解析失败: ${e?.message || "未知错误"}`,
+        },
+      ]);
     }
     setParsing(false);
   }, []);
@@ -69,20 +81,16 @@ export default function ImportPage() {
         h.includes("question") || h.includes("题干") || h.includes("题目"),
     );
     const optAIdx = header.findIndex(
-      (h: string) =>
-        h.includes("option_a") || h.includes("a") || h.includes("选项a"),
+      (h: string) => h.includes("option_a") || h === "a" || h.includes("选项a"),
     );
     const optBIdx = header.findIndex(
-      (h: string) =>
-        h.includes("option_b") || h.includes("b") || h.includes("选项b"),
+      (h: string) => h.includes("option_b") || h === "b" || h.includes("选项b"),
     );
     const optCIdx = header.findIndex(
-      (h: string) =>
-        h.includes("option_c") || h.includes("c") || h.includes("选项c"),
+      (h: string) => h.includes("option_c") || h === "c" || h.includes("选项c"),
     );
     const optDIdx = header.findIndex(
-      (h: string) =>
-        h.includes("option_d") || h.includes("d") || h.includes("选项d"),
+      (h: string) => h.includes("option_d") || h === "d" || h.includes("选项d"),
     );
     const ansIdx = header.findIndex(
       (h: string) => h.includes("answer") || h.includes("答案"),
@@ -196,12 +204,13 @@ export default function ImportPage() {
       const userId = JSON.parse(
         localStorage.getItem("quiz_auth") || "{}",
       ).userId;
+      if (!userId) throw new Error("请先登录");
       const { data: deck } = await supabase
         .from("quiz_decks")
-        .insert({ title: deckTitle })
+        .insert({ title: deckTitle, user_id: userId })
         .select("id")
         .single();
-      if (!deck) throw new Error("Failed to create deck");
+      if (!deck) throw new Error("创建题库失败");
       const okRows = rows.filter((r) => r.status === "ok");
       const questions = okRows.map((r, i) => ({
         deck_id: deck.id,
@@ -217,7 +226,19 @@ export default function ImportPage() {
       if (error) throw error;
       navigate(`/deck/${deck.id}`, { replace: true });
     } catch (e: any) {
-      console.error("Import error:", e);
+      setRows([
+        {
+          index: 0,
+          type: "choice",
+          question: "",
+          options: {},
+          answer: "",
+          explanation: "",
+          tags: [],
+          status: "error",
+          errorMsg: `导入失败: ${e?.message || "未知错误"}`,
+        },
+      ]);
     }
     setImporting(false);
   };
